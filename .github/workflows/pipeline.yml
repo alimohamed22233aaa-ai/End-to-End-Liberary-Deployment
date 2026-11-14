@@ -1,0 +1,59 @@
+name: Terraform and Ansible Pipeline
+
+on:
+  push:
+    branches: [main]
+  
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: us-east-1
+  ANSIBLE_HOST_KEY_CHECKING: "False"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Get runner public IP
+        run: echo "TF_VAR_my_ip=$(curl -s https://checkip.amazonaws.com)/32" >> $GITHUB_ENV
+
+      - name: Terraform init
+        working-directory: infra/dev
+        run: terraform init
+
+      - name: Terraform validate
+        working-directory: infra/dev
+        run: terraform validate
+
+      - name: Terraform plan
+        working-directory: infra/dev
+        run: terraform plan
+
+      - name: Terraform apply
+        working-directory: infra/dev
+        run: terraform apply -auto-approve
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ali-mohamed.pem
+          chmod 400 ~/.ssh/ali-mohamed.pem
+
+      - name: Install Ansible
+        run: pip install ansible
+
+      - name: Wait for nodes to accept SSH
+        working-directory: ansible
+        run: ansible all -i inventory.ini -m wait_for_connection -a "timeout=300 delay=10"
+
+      - name: Run Ansible playbook
+        working-directory: ansible
+        run: ansible-playbook -i inventory.ini playbook.yml
