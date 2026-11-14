@@ -50,17 +50,11 @@ jobs:
       - name: Install Ansible
         run: pip install ansible
 
+    
       - name: Wait for nodes to accept SSH
         working-directory: ansible
-        run: |
-          for i in $(seq 1 20); do
-            if ansible all -i inventory.ini -m ping; then
-              exit 0
-            fi
-            echo "Nodes not ready, retry $i..."
-            sleep 15
-          done
-          exit 1
+        run: ansible all -i inventory.ini -m wait_for_connection -a "timeout=300 delay=10"
+
 
       - name: Run Ansible playbook
         working-directory: ansible
