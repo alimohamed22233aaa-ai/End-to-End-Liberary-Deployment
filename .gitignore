@@ -1,0 +1,13 @@
+@"
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+
+# Keys
+*.pem
+
+# Generated
+ansible/inventory.ini
+"@ | Out-File -Encoding utf8 .gitignore
