@@ -11,8 +11,9 @@ env:
   ANSIBLE_HOST_KEY_CHECKING: "False"
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  Automate_infra:
+    runs-on: self-hosted
+
 
     steps:
       - name: Checkout code
