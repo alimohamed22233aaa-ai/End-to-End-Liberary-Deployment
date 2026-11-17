@@ -23,7 +23,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Get runner public IP
-        run: echo "TF_VAR_my_ip=$(curl -s https://checkip.amazonaws.com)/32" >> $GITHUB_ENV
+        run: echo "TF_VAR_my_ip=[\"$(curl -s https://checkip.amazonaws.com | tr -d '[:space:]')/32\"]" >> $GITHUB_ENV
       - name: Debug my_ip
         run: echo "$TF_VAR_my_ip"
       - name: Terraform init
