@@ -18,8 +18,7 @@ jobs:
 
       - uses: docker/build-push-action@v6
         with:
-            context: .
-            file: ./app/Dockerfile
+            context: ./app
             push: true
             tags: ${{ secrets.DOCKERHUB_USERNAME }}/library-app:${{ github.sha }}
 
