@@ -22,15 +22,20 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/library-app:${{ github.sha }}
 
-      - name: Deploy on cluster
+      - name: Deploy to Master Node
         run: |
-          kubectl create secret generic library-secrets \
-            --from-literal=POSTGRES_USER='${{ secrets.POSTGRES_USER }}' \
-            --from-literal=POSTGRES_PASSWORD='${{ secrets.POSTGRES_PASSWORD }}' \
-            --from-literal=POSTGRES_DB='${{ secrets.POSTGRES_DB }}' \
-            --from-literal=SECRET_KEY='${{ secrets.SECRET_KEY }}' \
-            --dry-run=client -o yaml | kubectl apply -f -
-          sed -i 's|IMAGE_PLACEHOLDER|${{ secrets.DOCKERHUB_USERNAME }}/library-app:${{ github.sha }}|' ./k8s/web.yaml
-          kubectl apply -f ./k8s/
-          kubectl rollout status deployment/db --timeout=120s
-          kubectl rollout status deployment/web --timeout=180s
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
+            chmod 600 key.pem
+            sed -i 's|IMAGE_PLACEHOLDER|${{ secrets.DOCKERHUB_USERNAME }}/library-app:${{ github.sha }}|' ./k8s/web.yaml
+            scp -i key.pem -o StrictHostKeyChecking=no -r ./k8s ${{ secrets.EC2_USER }}@${{ secrets.NODE_HOST }}:~/
+            ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.NODE_HOST }} "
+                kubectl create secret generic library-secrets \
+                    --from-literal=POSTGRES_USER='${{ secrets.POSTGRES_USER }}' \
+                    --from-literal=POSTGRES_PASSWORD='${{ secrets.POSTGRES_PASSWORD }}' \
+                    --from-literal=POSTGRES_DB='${{ secrets.POSTGRES_DB }}' \
+                    --from-literal=SECRET_KEY='${{ secrets.SECRET_KEY }}' \
+                    --dry-run=client -o yaml | kubectl apply -f -
+            kubectl apply -f ~/k8s/
+            kubectl rollout status deployment/db --timeout=120s
+            kubectl rollout status deployment/web --timeout=180s
+            "
