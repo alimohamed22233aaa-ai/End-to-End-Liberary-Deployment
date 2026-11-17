@@ -14,5 +14,6 @@ variable "sg-name" {
 }
 
 variable "my_ip" {
-  type = list(string)
+  type    = list(string)
+  default = ["156.207.215.236/32"]
 }
