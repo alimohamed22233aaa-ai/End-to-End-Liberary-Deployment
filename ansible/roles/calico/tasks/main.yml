@@ -1,0 +1,37 @@
+---
+- name: Download Calico manifest
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/projectcalico/calico/{{ calico_version }}/manifests/calico.yaml"
+    dest: "/home/{{ k8s_user }}/calico.yaml"
+    mode: "0644"
+
+- name: Disable IPIP mode
+  ansible.builtin.replace:
+    path: "/home/{{ k8s_user }}/calico.yaml"
+    regexp: '(CALICO_IPV4POOL_IPIP\n\s+value: )"Always"'
+    replace: '\1"Never"'
+
+- name: Enable VXLAN mode
+  ansible.builtin.replace:
+    path: "/home/{{ k8s_user }}/calico.yaml"
+    regexp: '(CALICO_IPV4POOL_VXLAN\n\s+value: )"Never"'
+    replace: '\1"Always"'
+
+- name: Apply Calico manifest
+  ansible.builtin.command: kubectl apply -f calico.yaml
+  args:
+    chdir: "/home/{{ k8s_user }}"
+  changed_when: false
+
+- name: Wait for master node to be Ready
+  ansible.builtin.command: kubectl wait --for=condition=Ready nodes --all --timeout=300s
+  changed_when: false
+
+- name: Get kube-system pods
+  ansible.builtin.command: kubectl get pods -n kube-system
+  register: calico_pods
+  changed_when: false
+
+- name: Show pods
+  ansible.builtin.debug:
+    var: calico_pods.stdout_lines

@@ -21,8 +21,8 @@ module "task1" {
 }
 
 resource "local_file" "inventory" {
-  filename = "${path.module}/../../ansible/inventory.ini"
-  content = templatefile("${path.module}/inventory.tftpl", {
+  filename = "../../ansible/inventory.ini"
+  content = templatefile("${path.module}/inventory.txt", {
     bastion_ip = module.task1.bastion_public_ip
     master_ip  = module.task1.master_private_ip
     worker1_ip = module.task1.worker1_private_ip
