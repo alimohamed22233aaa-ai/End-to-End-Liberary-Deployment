@@ -41,7 +41,6 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-# SG بتاع الـ Bastion
 resource "aws_security_group" "bastion" {
   name        = "${var.sg-name}-bastion"
   vpc_id      = aws_vpc.main.id
@@ -63,7 +62,6 @@ resource "aws_security_group" "bastion" {
   }
 }
 
-# SG بتاع الـ nodes
 resource "aws_security_group" "server" {
   name        = var.sg-name
   vpc_id      = aws_vpc.main.id

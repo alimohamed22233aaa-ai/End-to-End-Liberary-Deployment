@@ -11,3 +11,5 @@
 # Generated
 ansible/inventory.ini
 "@ | Out-File -Encoding utf8 .gitignore
+
+app/.env

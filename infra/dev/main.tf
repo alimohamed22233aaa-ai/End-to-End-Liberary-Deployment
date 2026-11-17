@@ -10,7 +10,7 @@ terraform {
 
 provider "aws" {
   region  = "us-east-1"
-  #  profile = "depi_project"
+    # profile = "depi_project"
 }
 module "task1" {
     source = "../modules/ec2"
