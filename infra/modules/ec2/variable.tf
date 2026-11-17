@@ -14,6 +14,5 @@ variable "sg-name" {
 }
 
 variable "my_ip" {
-  type        = string
- 
+  type = list(string)
 }

@@ -90,7 +90,7 @@ resource "aws_security_group" "server" {
     from_port   = 6443
     to_port     = 6443
     protocol    = "tcp"
-    cidr_blocks = [var.my_ip]
+    cidr_blocks = var.my_ip
   }
 
   ingress {
