@@ -67,7 +67,7 @@ jobs:
 
       - name: Install Ansible
         if: inputs.action == 'apply'
-        run: pip install ansible
+        run: pip3 install ansible
 
       - name: Wait for nodes to accept SSH
         if: inputs.action == 'apply'
