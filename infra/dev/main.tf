@@ -5,6 +5,12 @@ terraform {
       version = "~> 6.0"
     }
   }
+  backend "s3" {
+    bucket       = "my-depi-terraform-tfstate-bucket "
+    key          = "dev/terraform.tfstate"
+    region       = "us-east-1"
+    use_lockfile = true
+  }
 }
 
 
@@ -29,3 +35,4 @@ resource "local_file" "inventory" {
     worker2_ip = module.task1.worker2_private_ip
   })
 }
+
