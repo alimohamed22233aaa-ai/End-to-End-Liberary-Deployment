@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket       = "my-depi-terraform-tfstate-bucket "
+    bucket       = "my-depi-terraform-tfstate-bucket"
     key          = "dev/terraform.tfstate"
     region       = "us-east-1"
     use_lockfile = true
