@@ -64,10 +64,11 @@ jobs:
           rm -f ~/.ssh/ali-mohamed.pem
           printf '%s\n' "$SSH_KEY" > ~/.ssh/ali-mohamed.pem
           chmod 400 ~/.ssh/ali-mohamed.pem
-
-      - name: Install Ansible
+      - name: Check Ansible
         if: inputs.action == 'apply'
-        run: pip3 install ansible
+
+        run: ansible --version
+
 
       - name: Wait for nodes to accept SSH
         if: inputs.action == 'apply'
