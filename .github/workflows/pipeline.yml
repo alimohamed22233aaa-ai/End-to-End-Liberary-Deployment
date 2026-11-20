@@ -1,8 +1,17 @@
 name: Terraform and Ansible Pipeline
 
 on:
-  
   workflow_dispatch:
+    inputs:
+      action:
+        description: "select option"
+        required: true
+        default: plan
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -14,7 +23,6 @@ jobs:
   Automate_infra:
     runs-on: self-hosted
 
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,8 +32,7 @@ jobs:
 
       - name: Get runner public IP
         run: echo "TF_VAR_my_ip=[\"$(curl -s https://checkip.amazonaws.com | tr -d '[:space:]')/32\"]" >> $GITHUB_ENV
-      - name: Debug my_ip
-        run: echo "$TF_VAR_my_ip"
+
       - name: Terraform init
         working-directory: infra/dev
         run: terraform init
@@ -34,29 +41,41 @@ jobs:
         working-directory: infra/dev
         run: terraform validate
 
+      
       - name: Terraform plan
+        if: inputs.action == 'plan' || inputs.action == 'apply'
         working-directory: infra/dev
         run: terraform plan
 
+      
       - name: Terraform apply
+        if: inputs.action == 'apply'
         working-directory: infra/dev
         run: terraform apply -auto-approve
 
       - name: Setup SSH key
+        if: inputs.action == 'apply'
         run: |
           mkdir -p ~/.ssh
           printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ali-mohamed.pem
           chmod 400 ~/.ssh/ali-mohamed.pem
 
       - name: Install Ansible
+        if: inputs.action == 'apply'
         run: pip install ansible
 
-    
       - name: Wait for nodes to accept SSH
+        if: inputs.action == 'apply'
         working-directory: ansible
         run: ansible all -i inventory.ini -m wait_for_connection -a "timeout=300 delay=10"
 
-
       - name: Run Ansible playbook
+        if: inputs.action == 'apply'
         working-directory: ansible
         run: ansible-playbook -i inventory.ini playbook.yml
+
+      
+      - name: Terraform destroy
+        if: inputs.action == 'destroy'
+        working-directory: infra/dev
+        run: terraform destroy -auto-approve

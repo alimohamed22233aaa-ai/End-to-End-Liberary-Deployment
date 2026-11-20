@@ -1,0 +1,14 @@
+# NodePort لأن الكلاستر self-managed على EC2 (مفيش LoadBalancer جاهز)
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: library
+spec:
+  type: NodePort
+  selector:
+    app: web
+  ports:
+    - port: 5000
+      targetPort: 5000
+      nodePort: 30500
