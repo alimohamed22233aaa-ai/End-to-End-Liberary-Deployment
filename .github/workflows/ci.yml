@@ -1,4 +1,4 @@
-name: Dev Deployment
+name: Build-Push Image to ghcr
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  Build:
+  Build-Push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -27,7 +27,7 @@ jobs:
         id: vars
         run: |
           echo "short_tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
-          echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/web-app" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/library-app" >> "$GITHUB_OUTPUT"
 
       - name: Login to GHCR
         uses: docker/login-action@v3
