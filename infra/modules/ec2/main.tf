@@ -47,11 +47,11 @@ resource "aws_security_group" "bastion" {
   description = "security group of bastion server"
 
   ingress {
-    description = "SSH from my IP"
+    description = "SSH from my IP and runner IP"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = concat(var.my_ip, var.runner_ip)
   }
 
   egress {
@@ -72,7 +72,7 @@ resource "aws_security_group" "server" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${aws_instance.depi.private_ip}/32"]
+    cidr_blocks = aws_security_group
   }
 
   ingress {

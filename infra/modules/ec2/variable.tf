@@ -15,5 +15,9 @@ variable "sg-name" {
 
 variable "my_ip" {
   type    = list(string)
-  default = ["156.207.215.236/32"]
+  
+}
+variable "runner_ip" {
+  description = "Runner public IP(s) in CIDR form"
+  type        = list(string)
 }
