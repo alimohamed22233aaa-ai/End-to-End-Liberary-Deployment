@@ -31,9 +31,9 @@ db:
 web:
   replicaCount: 3
   image:
-    repository: ali00mohamed/library-app
-    tag: 01818868a6379bbef0350b941e81653454420001
-    pullPolicy: IfNotPresent
+    repository: ghcr.io/alimohamed22233aaa-ai/library-app
+    tag: latest
+    pullPolicy: Always
   command: ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--threads", "4", "app:app"]
   containerPort: 5000
   service:

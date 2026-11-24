@@ -24,6 +24,7 @@ module "task1" {
     subnet_cidr = var.subnet_cidr
     sg-name     = var.sg-name
     my_ip       = var.my_ip
+    runner_ip = var.runner_ip   
 }
 
 resource "local_file" "inventory" {
