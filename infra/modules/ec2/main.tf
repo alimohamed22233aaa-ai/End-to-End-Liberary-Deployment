@@ -72,7 +72,7 @@ resource "aws_security_group" "server" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = aws_security_group
+    cidr_blocks = [aws_security_group.bastion.id]
   }
 
   ingress {
