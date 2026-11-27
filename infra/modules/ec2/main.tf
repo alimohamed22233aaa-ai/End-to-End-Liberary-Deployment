@@ -84,6 +84,20 @@ resource "aws_security_group" "server" {
   }
 
   ingress {
+    description = "port of app"
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    self        = true
+  }
+  ingress {
+    description = "port of argocd"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    self        = true
+  }
+  ingress {
     description = "Kubernetes API server from my IP"
     from_port   = 6443
     to_port     = 6443
