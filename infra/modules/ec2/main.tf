@@ -88,14 +88,14 @@ resource "aws_security_group" "server" {
     from_port   = 5000
     to_port     = 5000
     protocol    = "tcp"
-    self        = true
+    cidr_blocks = var.my_ip
   }
   ingress {
     description = "port of argocd"
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    self        = true
+    cidr_blocks = var.my_ip
   }
   ingress {
     description = "Kubernetes API server from my IP"
